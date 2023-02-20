@@ -2,13 +2,13 @@ package networking
 
 import (
 	"context"
-	"fmt"
 	"math/rand"
 	"net"
 
 	"github.com/Vivena/Toy-QKD-IKE/gateway/constants"
 	"github.com/Vivena/Toy-QKD-IKE/gateway/core"
 	"github.com/Vivena/Toy-QKD-IKE/gateway/crypto"
+	"github.com/Vivena/Toy-QKD-IKE/gateway/payload"
 )
 
 type Cli struct {
@@ -41,7 +41,7 @@ func (c *Cli) get_SPI() uint32 {
 	}
 }
 
-func (c *Cli) Init_IKE_SA() {
+func (c *Cli) Init_IKE_SA() error {
 	ctx := context.Background()
 	// We first get the key from the QKD
 	key, err := c.qkd.GetKey(ctx, 256)
@@ -50,6 +50,26 @@ func (c *Cli) Init_IKE_SA() {
 	if err != nil {
 		panic(err)
 	}
+	overall_size := 0
 
-	fmt.Printf("key: %x", key.Key)
+	var key_Payload payload.QKD_KeyID_payload
+	var tf_payload payload.QKD_Transform_payload
+
+	tmp, err := payload.New_QKD_KeyID_payload(key.Key_id, &key_Payload)
+	if err != nil {
+		goto END
+	}
+	//TODO:
+	//key_Payload.header.Set_next_payload()
+	key_Payload.header.Set_payload_len(tmp)
+	key_Payload.header.Set_version()
+	key_Payload.header.Set_mode_N()
+	key_Payload.header.Set_device_id(c.qkd.saeID)
+	key_Payload.header.Set_key_id_len(len(key_Payload.key_ID))
+
+	overall_size += tmp
+
+END:
+	// TODO: Zero the key
+	return err
 }

@@ -1,10 +1,5 @@
 package headers
 
-import (
-	"net/http"
-	"time"
-)
-
 const (
 	IKE_SA_INIT = 34
 	IKE_AUTH    = 35
@@ -34,14 +29,9 @@ func (h *IKE_Header) setDefaultFlag() {
 	h.flagSetVersion()
 }
 
+// TODO
 func NewIKEHeader() *IKE_Header {
-	return &QKD{url: url,
-		port:  port,
-		saeID: saeID,
-		HTTPClient: &http.Client{
-			Timeout: time.Minute,
-		},
-	}
+	return nil
 }
 
 func (h *IKE_Header) SetIsInitFlag() {
