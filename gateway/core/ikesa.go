@@ -1,6 +1,6 @@
 package core
 
-type ikeSA struct {
+type IkeSA struct {
 	Name            string             `vici:"-"`
 	State           string             `vici:"state"`
 	LocalVirtualIPs []string           `vici:"local-vips"`

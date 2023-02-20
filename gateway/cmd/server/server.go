@@ -5,7 +5,7 @@ import (
 
 	"github.com/spf13/cobra"
 
-	. "github.com/Vivena/Toy-QKD-IKE/gateway/networking"
+	"github.com/Vivena/Toy-QKD-IKE/gateway/networking"
 )
 
 // Program name
@@ -26,8 +26,8 @@ var cobraCommand = &cobra.Command{
 		// Parsing of the command line is done so silence cmd usage
 		cmd.SilenceUsage = true
 		fmt.Print("Starting the server")
-		var server Interface
-		server.Execute()
+		var server networking.Serv
+		server.Start()
 		return nil
 	},
 }

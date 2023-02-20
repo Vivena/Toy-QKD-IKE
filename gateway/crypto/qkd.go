@@ -27,6 +27,16 @@ type QKD struct {
 	HTTPClient *http.Client
 }
 
+type Keys struct {
+	Key_id  string `json:"key_id"`
+	Key_tmp string `json:"key"`
+	Key     []byte
+}
+
+type RequestObj struct {
+	Keys []Keys `json:"Keys"`
+}
+
 //TODO: add mTLS
 func NewQKD(url string, port string, saeID string) *QKD {
 
