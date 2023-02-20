@@ -1,7 +1,10 @@
 package networking
 
 import (
+	"bytes"
 	"context"
+	"encoding/binary"
+	"fmt"
 	"math/rand"
 	"net"
 	"sync"
@@ -57,7 +60,7 @@ func (c *Cli) get_SPI() uint32 {
 	}
 }
 
-func (c *Cli) Init_IKE_SA() error {
+func (c *Cli) create_Packet_content() ([]byte, error) {
 	ctx := context.Background()
 	// We first get the key from the QKD
 	key, err := c.qkd.GetKey(ctx, 256)
@@ -66,15 +69,17 @@ func (c *Cli) Init_IKE_SA() error {
 	if err != nil {
 		panic(err)
 	}
+
 	overall_size := uint32(0)
 
 	var key_Payload payloads.QKD_KeyID_payload
-
+	fmt.Println("Get QKD key")
 	tmp, err := payloads.New_QKD_KeyID_payload(key.Key_id, &key_Payload)
 	if err != nil {
-		return err
+		return nil, err
 	}
 
+	fmt.Println("Create Key Payload")
 	key_Payload.Header.Set_next_payload(constants.QKD_KEY_ID)
 	key_Payload.Header.Set_payload_len(tmp)
 	key_Payload.Header.Set_version()
@@ -84,11 +89,13 @@ func (c *Cli) Init_IKE_SA() error {
 
 	overall_size += uint32(tmp)
 
+	fmt.Println("Create Transform Payload")
 	tf_payload := payloads.New_Transform_payload()
 	tf_payload.Set_is_last()
 
 	overall_size += uint32(unsafe.Sizeof(tf_payload))
 
+	fmt.Println("Create IKE Header")
 	ike_header := headers.New_IKE_Header()
 
 	ike_header.SetDefaultFlag()
@@ -101,6 +108,55 @@ func (c *Cli) Init_IKE_SA() error {
 	overall_size += uint32(unsafe.Sizeof(ike_header))
 	ike_header.Set_length(overall_size)
 
+	buf := new(bytes.Buffer)
+
+	err = binary.Write(buf, binary.LittleEndian, ike_header)
+	if err != nil {
+		return nil, err
+	}
+	err = binary.Write(buf, binary.LittleEndian, tf_payload)
+	if err != nil {
+		return nil, err
+	}
+	err = binary.Write(buf, binary.LittleEndian, key_Payload.Header)
+	if err != nil {
+		return nil, err
+	}
+	err = binary.Write(buf, binary.LittleEndian, []byte(key_Payload.Key_ID()))
+	if err != nil {
+		return nil, err
+	}
+
+	return buf.Bytes(), nil
+}
+
+func (c *Cli) Init_IKE_SA_Reply(conn net.Conn) error {
+	return nil
+}
+
+func (c *Cli) Init_IKE_SA() error {
+
+	content, err := c.create_Packet_content()
+	if err != nil {
+		return err
+	}
+
+	conn, err := net.DialUDP("udp", nil, c.addr)
+	if err != nil {
+		fmt.Println("Listen failed:", err.Error())
+		return err
+	}
+
+	//close the connection
+	defer conn.Close()
+	fmt.Println("Sending the content")
+	fmt.Println(content)
+	_, err = conn.Write(content)
+	if err != nil {
+		fmt.Println("Write data failed:", err.Error())
+		return err
+	}
+	fmt.Println("Done.")
 	// TODO: Zero the key
-	return err
+	return nil
 }

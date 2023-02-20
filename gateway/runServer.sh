@@ -1,3 +1,3 @@
-#!/bin/sh/
+#!/bin/sh
 
 go run vpn.go server

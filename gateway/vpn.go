@@ -26,6 +26,9 @@ func main() {
 	client.Cmd().PersistentFlags().String("qkd-port", "", "Port for the QKD REST API.")
 	client.Cmd().PersistentFlags().String("sa-ip", "", "IP for the SA we want to connect to.")
 
+	server.Cmd().PersistentFlags().String("qkd-ip", "", "IP for the QKD REST API.")
+	server.Cmd().PersistentFlags().String("qkd-port", "", "Port for the QKD REST API.")
+
 	if mainCmd.Execute() != nil {
 		os.Exit(1)
 	}

@@ -25,8 +25,15 @@ var cobraCommand = &cobra.Command{
 		}
 		// Parsing of the command line is done so silence cmd usage
 		cmd.SilenceUsage = true
+
+		// qkd_addr, _ := cmd.Flags().GetString("qkd-ip")
+		// qkd_port, _ := cmd.Flags().GetString("qkd-port")
+
 		fmt.Println("Starting the server")
-		var server networking.Serv
+		server, err := networking.NewServ()
+		if err != nil {
+			return err
+		}
 		server.Start()
 		return nil
 	},
