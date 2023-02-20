@@ -2,6 +2,7 @@ package crypto
 
 import (
 	"context"
+	"encoding/hex"
 	"encoding/json"
 	"errors"
 	"fmt"
@@ -38,17 +39,17 @@ func NewQKD(url string, port string, saeID string) *QKD {
 	}
 }
 
-func (qkd *QKD) GetIP() string {
-	return qkd.url
-}
+// func (qkd *QKD) IP() string {
+// 	return qkd.url
+// }
 
-func (qkd *QKD) GetPort() string {
-	return qkd.port
-}
+// func (qkd *QKD) Port() string {
+// 	return qkd.port
+// }
 
-func (qkd *QKD) GetSAE_ID() string {
-	return qkd.saeID
-}
+// func (qkd *QKD) SAE_ID() string {
+// 	return qkd.saeID
+// }
 
 func (qkd *QKD) sendRequest(req *http.Request) (*Keys, error) {
 	req.Header.Set("Accept", "application/json; charset=utf-8")
@@ -66,7 +67,7 @@ func (qkd *QKD) sendRequest(req *http.Request) (*Keys, error) {
 			return nil, errors.New(errRes.Message)
 		}
 
-		return nil, fmt.Errorf("unknown error, status code: %d", res.StatusCode)
+		return nil, errors.New("unknown error")
 	}
 
 	var keys *RequestObj
@@ -76,13 +77,38 @@ func (qkd *QKD) sendRequest(req *http.Request) (*Keys, error) {
 		return nil, err
 	}
 
-	return &keys.Keys[0], nil
+	result := &keys.Keys[0]
+	result.Key, err = hex.DecodeString(result.Key_tmp)
+	if err != nil {
+		return nil, err
+	}
+	// TODO: use unsafe and cGO to convert the key_tmp from hex to byte array (string is immutable in GO)
+
+	return result, nil
 
 }
 
 func (qkd *QKD) GetKey(ctx context.Context, size int) (*Keys, error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf("%s:%s/api/v1/keys/%s/enc_keys?number=1&size=%d",
+	req, err := http.NewRequest("GET", fmt.Sprintf("http://%s:%s/api/v1/keys/%s/enc_keys?number=1&size=%d",
 		qkd.url, qkd.port, qkd.saeID, size), nil)
+	if err != nil {
+		return nil, err
+	}
+
+	req = req.WithContext(ctx)
+
+	if keys, err := qkd.sendRequest(req); err != nil {
+		return nil, err
+	} else {
+
+		return keys, nil
+	}
+
+}
+
+func (qkd *QKD) GetKeyWithID(ctx context.Context, keyID string) (*Keys, error) {
+	req, err := http.NewRequest("GET", fmt.Sprintf("http://%s:%s/api/v1/keys/%s/dec_keys?key_id=%s",
+		qkd.url, qkd.port, qkd.saeID, keyID), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -94,9 +120,4 @@ func (qkd *QKD) GetKey(ctx context.Context, size int) (*Keys, error) {
 	} else {
 		return keys, nil
 	}
-
-}
-
-func (qkd *QKD) GetKeyWithID() {
-
 }

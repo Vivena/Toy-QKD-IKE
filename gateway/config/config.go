@@ -8,8 +8,6 @@ import (
 	"github.com/Vivena/Toy-QKD-IKE/gateway/crypto"
 )
 
-var Conf Config
-
 var (
 	// default connection timeout
 	DefaultConnectionTimeout = 5 * time.Second
@@ -19,7 +17,7 @@ type Config struct {
 	DefaultConnectionTimeout time.Duration
 
 	// couchebase info
-	QKD_Conf QKD
+	QKD_Conf crypto.QKD
 }
 
 func (c *Config) load() error {
@@ -34,7 +32,7 @@ func (c *Config) load() error {
 	qkdURL := viper.GetString("qkd.url")
 	qkdPort := viper.GetString("qkd.port")
 	qkdSaeID := viper.GetString("qkd.saeID")
-	c.QKD_Conf = crypto.NewQKD(qkdURL, qkdPort, qkdSaeID)
+	c.QKD_Conf = *crypto.NewQKD(qkdURL, qkdPort, qkdSaeID)
 
 	return nil
 }

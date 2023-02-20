@@ -1,7 +1,7 @@
 package payloads
 
 import (
-	"github.com/Vivena/gateway/Toy-QKD-IKE/headers"
+	"github.com/Vivena/Toy-QKD-IKE/gateway/headers"
 )
 
 type QKD_KeyID_payload struct {

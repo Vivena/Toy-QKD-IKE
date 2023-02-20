@@ -1,9 +1,9 @@
 package payloads
 
 const (
-	WAIT_QKD 		uint16 = 1
-	DIFFIE-HELLMAN	uint16 = 2
-	CONTINUE		uint16 = 3 
+	WAIT_QKD      uint16 = 1
+	DIFFIEHELLMAN uint16 = 2
+	CONTINUE      uint16 = 3
 )
 
 type QKD_fallback_payload struct {

@@ -1,8 +1,9 @@
 package crypto
 
 type Keys struct {
-	Key_id string `json:"key_id"`
-	Key    string `json:"key"`
+	Key_id  string `json:"key_id"`
+	Key_tmp string `json:"key"`
+	Key     []byte
 }
 
 type RequestObj struct {
