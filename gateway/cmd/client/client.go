@@ -2,6 +2,7 @@ package client
 
 import (
 	"fmt"
+	"log"
 
 	"github.com/spf13/cobra"
 
@@ -9,14 +10,14 @@ import (
 )
 
 // Program name
-const ProgramName = "client"
+const ProgramName = "vpn"
 
 func Cmd() *cobra.Command {
 	return cobraCommand
 }
 
 var cobraCommand = &cobra.Command{
-	Use:   "start",
+	Use:   "client",
 	Short: "Start the vpn client.",
 	Long:  `Start the vpn client.`,
 	RunE: func(cmd *cobra.Command, args []string) error {
@@ -24,18 +25,21 @@ var cobraCommand = &cobra.Command{
 			return fmt.Errorf("trailing args detected")
 		}
 		// Parsing of the command line is done so silence cmd usage
-		cmd.SilenceUsage = true
-
+		// cmd.SilenceUsage = true
 		// TODO: error handeling
 		qkd_addr, _ := cmd.Flags().GetString("qkd-ip")
 		qkd_port, _ := cmd.Flags().GetString("qkd-port")
 		sa_ip, _ := cmd.Flags().GetString("sa-ip")
 
-		fmt.Print("Starting the server")
-		client := networking.NewClient(sa_ip, qkd_port, qkd_addr)
-
+		fmt.Println("Starting the client")
+		fmt.Println("Getting the QKD key")
+		client, err := networking.NewCli(sa_ip, qkd_addr, qkd_port)
+		if err != nil {
+			log.Fatal(err)
+		}
+		fmt.Println("Initializing the SA")
 		client.Init_IKE_SA()
-		
+
 		return nil
 	},
 }

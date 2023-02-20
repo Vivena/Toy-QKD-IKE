@@ -25,7 +25,7 @@ var cobraCommand = &cobra.Command{
 		}
 		// Parsing of the command line is done so silence cmd usage
 		cmd.SilenceUsage = true
-		fmt.Print("Starting the server")
+		fmt.Println("Starting the server")
 		var server networking.Serv
 		server.Start()
 		return nil

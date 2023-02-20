@@ -2,6 +2,7 @@ package networking
 
 import (
 	"context"
+	"fmt"
 	"math/rand"
 	"net"
 
@@ -50,6 +51,5 @@ func (c *Cli) Init_IKE_SA() {
 		panic(err)
 	}
 
-	fmt.Sprintf("%v", key.key)
-
+	fmt.Printf("key: %x", key.Key)
 }
