@@ -1,13 +1,13 @@
 package core
 
 type IkeSA struct {
-	Name            string             `vici:"-"`
-	State           string             `vici:"state"`
-	LocalVirtualIPs []string           `vici:"local-vips"`
-	ChildSAs        map[string]childSA `vici:"child-sas"`
+	Name  uint32
+	State string
 }
 
-type childSA struct {
-	Name  string `vici:"name"`
-	State string `vici:"state"`
+func NewIkeSA() *IkeSA {
+	return &IkeSA{Name: 0, State: "IKE_SA_INIT"}
 }
+
+// type childSA struct {
+// }

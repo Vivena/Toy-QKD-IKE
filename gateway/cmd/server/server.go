@@ -9,14 +9,14 @@ import (
 )
 
 // Program name
-const ProgramName = "server"
+const ProgramName = "vpn"
 
 func Cmd() *cobra.Command {
 	return cobraCommand
 }
 
 var cobraCommand = &cobra.Command{
-	Use:   "start",
+	Use:   "server",
 	Short: "Start the vpn server.",
 	Long:  `Start the vpn server.`,
 	RunE: func(cmd *cobra.Command, args []string) error {

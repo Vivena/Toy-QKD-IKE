@@ -23,7 +23,7 @@ type successResponse struct {
 type QKD struct {
 	url        string
 	port       string
-	saeID      string
+	SaeID      uint16
 	HTTPClient *http.Client
 }
 
@@ -38,11 +38,11 @@ type RequestObj struct {
 }
 
 //TODO: add mTLS
-func NewQKD(url string, port string, saeID string) *QKD {
+func NewQKD(url string, port string, saeID uint16) *QKD {
 
 	return &QKD{url: url,
 		port:  port,
-		saeID: saeID,
+		SaeID: saeID,
 		HTTPClient: &http.Client{
 			Timeout: time.Minute,
 		},
@@ -99,8 +99,8 @@ func (qkd *QKD) sendRequest(req *http.Request) (*Keys, error) {
 }
 
 func (qkd *QKD) GetKey(ctx context.Context, size int) (*Keys, error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf("http://%s:%s/api/v1/keys/%s/enc_keys?number=1&size=%d",
-		qkd.url, qkd.port, qkd.saeID, size), nil)
+	req, err := http.NewRequest("GET", fmt.Sprintf("http://%s:%s/api/v1/keys/%d/enc_keys?number=1&size=%d",
+		qkd.url, qkd.port, qkd.SaeID, size), nil)
 	if err != nil {
 		return nil, err
 	}
@@ -118,7 +118,7 @@ func (qkd *QKD) GetKey(ctx context.Context, size int) (*Keys, error) {
 
 func (qkd *QKD) GetKeyWithID(ctx context.Context, keyID string) (*Keys, error) {
 	req, err := http.NewRequest("GET", fmt.Sprintf("http://%s:%s/api/v1/keys/%s/dec_keys?key_id=%s",
-		qkd.url, qkd.port, qkd.saeID, keyID), nil)
+		qkd.url, qkd.port, qkd.SaeID, keyID), nil)
 	if err != nil {
 		return nil, err
 	}

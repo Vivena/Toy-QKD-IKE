@@ -11,41 +11,64 @@ type IKE_Header struct {
 	Next_payload    uint8
 	Version         uint8
 	Exchange_type   uint8
-	flags           uint8
+	Flags           uint8
 	MessageID       uint32
-	length          uint32
+	Length          uint32
+}
+
+func New_IKE_Header() *IKE_Header {
+	return &IKE_Header{Version: uint8(0x22)}
 }
 
 func (h *IKE_Header) flagSetReserved() {
-	h.flags &= 0x38
+	h.Flags &= 0x38
 }
 
 func (h *IKE_Header) flagSetVersion() {
-	h.flags &= 0xEF
+	h.Flags &= 0xEF
 }
 
-func (h *IKE_Header) setDefaultFlag() {
+func (h *IKE_Header) SetDefaultFlag() {
 	h.flagSetReserved()
 	h.flagSetVersion()
 }
 
-// TODO
-func NewIKEHeader() *IKE_Header {
-	return nil
-}
-
 func (h *IKE_Header) SetIsInitFlag() {
-	h.flags |= 1 << 3
+	h.Flags |= 1 << 3
 }
 
 func (h *IKE_Header) IsInit() bool {
-	return !(h.flags&(0x1<<3) == 0)
+	return !(h.Flags&(0x1<<3) == 0)
 }
 
 func (h *IKE_Header) SetIsRespFlag() {
-	h.flags |= 1 << 5
+	h.Flags |= 1 << 5
 }
 
 func (h *IKE_Header) IsResp() bool {
-	return !(h.flags&(0x1<<5) == 0)
+	return !(h.Flags&(0x1<<5) == 0)
+}
+
+func (h *IKE_Header) Set_INIT_SPI(spi uint32) {
+	h.IKE_SA_INIT_SPI = spi
+}
+
+func (h *IKE_Header) Set_RESP_SPI(spi uint32) {
+	h.IKE_SA_RESP_SPI = spi
+}
+
+func (h *IKE_Header) Set_next_payload(payload uint8) {
+	h.Next_payload = payload
+}
+
+func (h *IKE_Header) Set_exchange_type(exchange_type uint8) {
+	h.Exchange_type = exchange_type
+}
+
+func (h *IKE_Header) Set_message_id(message_id uint32) {
+	h.MessageID = message_id
+}
+
+func (h *IKE_Header) Set_length(length uint32) {
+	h.Length = length
 }

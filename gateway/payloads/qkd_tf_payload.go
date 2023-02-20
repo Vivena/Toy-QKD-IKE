@@ -1,12 +1,5 @@
 package payloads
 
-import (
-	"errors"
-	"unsafe"
-
-	"github.com/Vivena/Toy-QKD-IKE/gateway/headers"
-)
-
 // We do not handle TF attributes
 type QKD_Transform_payload struct {
 	last          uint8
@@ -17,14 +10,13 @@ type QKD_Transform_payload struct {
 	transformID   uint16
 }
 
-func New_QKD_KeyID_payload(key_ID []byte, output *QKD_KeyID_payload) (uint16, error) {
+func New_Transform_payload() *QKD_Transform_payload {
+	return &QKD_Transform_payload{reserved1: 0, transformLen: 8, transformType: 241, reserved2: 0, transformID: 1}
+}
 
-	output.key_ID = make([]byte, len(key_ID))
-	n := copy(output.key_ID, key_ID)
-	if n != len(key_ID) {
-		return 0, errors.New("error copying key ")
-	}
-	output.header = *headers.New_QKD_KeyID_header()
-
-	return uint16(n) + uint16(unsafe.Sizeof(output.header)), nil
+func (t *QKD_Transform_payload) Set_is_last() {
+	t.last = 0
+}
+func (t *QKD_Transform_payload) Set_is_not_last() {
+	t.last = 3
 }

@@ -9,7 +9,7 @@ import (
 
 func TestNewQKD(t *testing.T) {
 	want := "127.0.0.1"
-	qkd := NewQKD(want, "8000", "test")
+	qkd := NewQKD(want, "8000", 1)
 	if qkd.url != want {
 		t.Errorf("got %q, wanted %q", qkd.url, want)
 	}
@@ -19,7 +19,7 @@ func TestGetKey(t *testing.T) {
 
 	ctx := context.Background()
 
-	qkd := NewQKD("127.0.0.1", "8000", "test")
+	qkd := NewQKD("127.0.0.1", "8000", 1)
 
 	key, err := qkd.GetKey(ctx, 256)
 
@@ -45,7 +45,7 @@ func TestGetKeyWithID(t *testing.T) {
 
 	ctx := context.Background()
 
-	qkd := NewQKD("127.0.0.1", "8000", "test")
+	qkd := NewQKD("127.0.0.1", "8000", 1)
 
 	key1, err := qkd.GetKey(ctx, 256)
 

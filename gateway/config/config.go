@@ -27,11 +27,11 @@ func (c *Config) load() error {
 
 	viper.SetDefault("qkd.url", "127.0.0.1")
 	viper.SetDefault("qkd.port", "8000")
-	viper.SetDefault("qkd.saeID", "test")
+	viper.SetDefault("qkd.saeID", 1)
 
 	qkdURL := viper.GetString("qkd.url")
 	qkdPort := viper.GetString("qkd.port")
-	qkdSaeID := viper.GetString("qkd.saeID")
+	qkdSaeID := viper.GetUint16("qkd.saeID")
 	c.QKD_Conf = *crypto.NewQKD(qkdURL, qkdPort, qkdSaeID)
 
 	return nil
