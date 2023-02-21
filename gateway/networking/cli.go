@@ -18,17 +18,28 @@ import (
 	"github.com/Vivena/Toy-QKD-IKE/gateway/payloads"
 )
 
+// Cli: basic information to be able to run a IKE instance
 type Cli struct {
-	addr     *net.UDPAddr
-	qkd      *crypto.QKD
+	// addr: UDP address of the server
+	addr *net.UDPAddr
+	// qkd:	information to connect to the assigned qkd
+	qkd *crypto.QKD
+	// listLock: allows to lock the saList
 	listLock sync.Mutex
-	SaList   map[uint32]core.IkeSA
+	// SaList: List of all the IKE SA registered in the IKE instance
+	SaList map[uint32]core.IkeSA
 }
 
+// QKD: getter for the qkd field
 func (c *Cli) QKD() *crypto.QKD {
 	return c.qkd
 }
 
+// TODO: set getter for all the Cli fields
+
+// TODO: We might want to decouple the NewCli from udp address solving to allow for the instance to start
+// without a server to connect to.
+// NewCli: create a new Cli instance and resolve the upd address for the server we want to connect to
 func NewCli(sa_ip string, qkd_ip string, qkd_port string) (*Cli, error) {
 	// We set the addr for the other end-point
 	var c Cli
@@ -39,14 +50,19 @@ func NewCli(sa_ip string, qkd_ip string, qkd_port string) (*Cli, error) {
 	}
 	c.addr = ServerAddr
 
-	// We setup the qkd
+	// We setup the qkd based on the info provided
+	// TODO: once we don't run a dummy qkd,we will need to ask the user to provide
+	// the qkd id instead of using 1 as a default qkd id
 	c.qkd = crypto.NewQKD(qkd_ip, qkd_port, 1)
 	c.SaList = make(map[uint32]core.IkeSA)
 	return &c, nil
 }
 
+// get_SPI: get a new SPI to identify the new SA connection
 func (c *Cli) get_SPI() uint32 {
-	// Todo: See if we add a max number of retry
+	// TODO: see if we add a max number of retry
+	// TODO: see if we also create a list of known SPI instead of only looking at
+	// SPI used for initializer point of view (Do we create a central DB later to handle that?)
 	ike_sa := core.IkeSA{Name: 0, State: "IKE_SA_INIT"}
 	for {
 		res := rand.Uint32()
@@ -60,17 +76,21 @@ func (c *Cli) get_SPI() uint32 {
 	}
 }
 
-func (c *Cli) create_Packet_content() ([]byte, error) {
+// create_Packet_content_Init_IKE_SA: create the Init_IKE_SA message
+func (c *Cli) create_Packet_content_Init_IKE_SA() ([]byte, error) {
+	// TODO: only set timeout if asked to
+	// ctx is the context for the connection with the QKD
 	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(time.Second*constants.Timeout))
 	defer cancel()
-	// We first get the key from the QKD
-	key, err := c.qkd.GetKey(ctx, 256)
 
+	// We first get the key from the QKD (see if we want to allow for different key size later)
+	key, err := c.qkd.GetKey(ctx, 256)
 	// TODO: error handeling
 	if err != nil {
 		panic(err)
 	}
 
+	// Starting now we will track the overall size of the message as we built it
 	overall_size := uint32(0)
 
 	var key_Payload payloads.QKD_KeyID_payload
@@ -137,7 +157,7 @@ func (c *Cli) Init_IKE_SA_Reply(conn net.Conn) error {
 
 func (c *Cli) Init_IKE_SA() error {
 
-	content, err := c.create_Packet_content()
+	content, err := c.create_Packet_content_Init_IKE_SA()
 	if err != nil {
 		return err
 	}
