@@ -8,6 +8,7 @@ import (
 	"math/rand"
 	"net"
 	"sync"
+	"time"
 	"unsafe"
 
 	"github.com/Vivena/Toy-QKD-IKE/gateway/constants"
@@ -60,7 +61,8 @@ func (c *Cli) get_SPI() uint32 {
 }
 
 func (c *Cli) create_Packet_content() ([]byte, error) {
-	ctx := context.Background()
+	ctx, cancel := context.WithTimeout(context.Background(), time.Duration(time.Second*constants.Timeout))
+	defer cancel()
 	// We first get the key from the QKD
 	key, err := c.qkd.GetKey(ctx, 256)
 

@@ -37,7 +37,7 @@ type RequestObj struct {
 	Keys []Keys `json:"Keys"`
 }
 
-//TODO: add mTLS
+// TODO: add mTLS
 func NewQKD(url string, port string, saeID uint16) *QKD {
 
 	return &QKD{url: url,
@@ -117,7 +117,7 @@ func (qkd *QKD) GetKey(ctx context.Context, size int) (*Keys, error) {
 }
 
 func (qkd *QKD) GetKeyWithID(ctx context.Context, keyID string) (*Keys, error) {
-	req, err := http.NewRequest("GET", fmt.Sprintf("http://%s:%s/api/v1/keys/%s/dec_keys?key_id=%s",
+	req, err := http.NewRequest("GET", fmt.Sprintf("http://%s:%s/api/v1/keys/%d/dec_keys?key_id=%s",
 		qkd.url, qkd.port, qkd.SaeID, keyID), nil)
 	if err != nil {
 		return nil, err

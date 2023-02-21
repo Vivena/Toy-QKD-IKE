@@ -6,6 +6,8 @@ const (
 	version     = 0x1
 	SA_port     = "4500"
 
+	Timeout = 5
+
 	IKE_HEADER_SIZE = 160
 
 	IKE_SA_INIT = uint8(34)
