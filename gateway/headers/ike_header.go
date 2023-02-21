@@ -1,5 +1,10 @@
 package headers
 
+import (
+	"bytes"
+	"encoding/binary"
+)
+
 const (
 	IKE_SA_INIT = 34
 	IKE_AUTH    = 35
@@ -71,4 +76,46 @@ func (h *IKE_Header) Set_message_id(message_id uint32) {
 
 func (h *IKE_Header) Set_length(length uint32) {
 	h.Length = length
+}
+
+func IKE_Header_Parse(header_bytes []byte) (*IKE_Header, error) {
+	var h IKE_Header
+	reader := bytes.NewReader(header_bytes)
+
+	err := binary.Read(reader, binary.LittleEndian, &h.IKE_SA_INIT_SPI)
+	if err != nil {
+		goto ERR
+	}
+	err = binary.Read(reader, binary.LittleEndian, &h.IKE_SA_RESP_SPI)
+	if err != nil {
+		goto ERR
+	}
+	err = binary.Read(reader, binary.LittleEndian, &h.Next_payload)
+	if err != nil {
+		goto ERR
+	}
+	err = binary.Read(reader, binary.LittleEndian, &h.Version)
+	if err != nil {
+		goto ERR
+	}
+	err = binary.Read(reader, binary.LittleEndian, &h.Exchange_type)
+	if err != nil {
+		goto ERR
+	}
+	err = binary.Read(reader, binary.LittleEndian, &h.Flags)
+	if err != nil {
+		goto ERR
+	}
+	err = binary.Read(reader, binary.LittleEndian, &h.MessageID)
+	if err != nil {
+		goto ERR
+	}
+	err = binary.Read(reader, binary.LittleEndian, &h.Length)
+	if err != nil {
+		goto ERR
+	}
+
+	return &h, nil
+ERR:
+	return nil, err
 }

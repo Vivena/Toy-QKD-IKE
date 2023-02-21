@@ -20,3 +20,7 @@ func (t *QKD_Transform_payload) Set_is_last() {
 func (t *QKD_Transform_payload) Set_is_not_last() {
 	t.last = 3
 }
+
+func Parse_QKD_Transform_payload(payload []byte) (*QKD_Transform_payload, error) {
+	return nil, nil
+}

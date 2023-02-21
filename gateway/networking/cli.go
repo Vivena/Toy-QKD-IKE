@@ -50,13 +50,12 @@ func (c *Cli) get_SPI() uint32 {
 	for {
 		res := rand.Uint32()
 		c.listLock.Lock()
+		defer c.listLock.Unlock()
 		_, ok := c.SaList[res]
 		if !ok {
 			c.SaList[res] = ike_sa
-			c.listLock.Unlock()
 			return res
 		}
-		c.listLock.Unlock()
 	}
 }
 
@@ -80,9 +79,9 @@ func (c *Cli) create_Packet_content() ([]byte, error) {
 	}
 
 	fmt.Println("Create Key Payload")
-	key_Payload.Header.Set_next_payload(constants.QKD_KEY_ID)
-	key_Payload.Header.Set_payload_len(tmp)
-	key_Payload.Header.Set_version()
+	key_Payload.Header.Set_Next_payload(constants.QKD_KEY_ID)
+	key_Payload.Header.Set_Payload_len(tmp)
+	key_Payload.Header.Set_Version()
 	key_Payload.Header.Set_mode_N()
 	key_Payload.Header.Set_device_id(c.QKD().SaeID)
 	key_Payload.Header.Set_key_id_len(uint16(len(key_Payload.Key_ID())))
@@ -103,7 +102,7 @@ func (c *Cli) create_Packet_content() ([]byte, error) {
 	ike_header.Set_INIT_SPI(c.get_SPI())
 	ike_header.Set_RESP_SPI(0)
 	ike_header.Set_next_payload(constants.QKD_PAYLOAD)
-	ike_header.Set_message_id(constants.IKE_SA_INIT)
+	ike_header.Set_message_id(0)
 
 	overall_size += uint32(unsafe.Sizeof(ike_header))
 	ike_header.Set_length(overall_size)

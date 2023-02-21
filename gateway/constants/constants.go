@@ -8,8 +8,8 @@ const (
 
 	IKE_HEADER_SIZE = 160
 
-	IKE_SA_INIT = 34
-	IKE_AUTH    = 35
+	IKE_SA_INIT = uint8(34)
+	IKE_AUTH    = uint8(35)
 
 	QKD_PAYLOAD = 128
 	QKD_KEY_ID  = 125

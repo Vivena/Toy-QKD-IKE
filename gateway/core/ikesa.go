@@ -1,8 +1,14 @@
 package core
 
+import "sync"
+
 type IkeSA struct {
-	Name  uint32
-	State string
+	SALock sync.Mutex
+	Name   uint32
+	State  string
+	Key_ID string
+	Key    []byte
+	HasKey bool
 }
 
 func NewIkeSA() *IkeSA {
