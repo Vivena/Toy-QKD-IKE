@@ -11,9 +11,10 @@ type IkeSA struct {
 	HasKey bool
 }
 
+// NewIkeSA: create the SA with the state "IKE_SA_INIT", and set the name to 0 while we wait for
+// the responder SPI
 func NewIkeSA() *IkeSA {
 	return &IkeSA{Name: 0, State: "IKE_SA_INIT"}
 }
 
-// type childSA struct {
-// }
+// TODO: create getters and setters for IkeSA

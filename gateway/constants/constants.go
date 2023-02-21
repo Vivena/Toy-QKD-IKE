@@ -1,10 +1,13 @@
 package constants
 
+// GOlang does not have macros.
+// This allows us to emulate macros and have a central place to get and modify those values
 const (
 	ProjectName = "My Project"
 	Title       = "Awesome Title"
 	version     = 0x1
-	SA_port     = "4500"
+
+	SA_port = "4500"
 
 	Timeout = 5
 

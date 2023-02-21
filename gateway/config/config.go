@@ -8,6 +8,10 @@ import (
 	"github.com/Vivena/Toy-QKD-IKE/gateway/crypto"
 )
 
+// TODO: Need to finish this part at a later date
+// this is where we read a conf file and create a config for our instance
+// the code bellos is not yet usable, nor is it incorporated in the rest of the implementation
+
 var (
 	// default connection timeout
 	DefaultConnectionTimeout = 5 * time.Second
@@ -16,7 +20,6 @@ var (
 type Config struct {
 	DefaultConnectionTimeout time.Duration
 
-	// couchebase info
 	QKD_Conf crypto.QKD
 }
 

@@ -26,14 +26,23 @@ var cobraCommand = &cobra.Command{
 		// Parsing of the command line is done so silence cmd usage
 		cmd.SilenceUsage = true
 
+		//TODO: add the flags so we can set the infos for the qkd
 		// qkd_addr, _ := cmd.Flags().GetString("qkd-ip")
 		// qkd_port, _ := cmd.Flags().GetString("qkd-port")
 
 		fmt.Println("Starting the server")
+		// create a new server with default configuration
 		server, err := networking.NewServ()
 		if err != nil {
 			return err
 		}
+
+		// TODO: once we incorporate the client and server in the same instance,
+		// we will run the server in a go routine.
+		// Furthemore, we will also run another server to receive uapi calls so we can controle the vpn,
+		// as well as another go routine running the TUN
+
+		// start the server
 		server.Start()
 		return nil
 	},
